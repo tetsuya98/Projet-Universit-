@@ -1,0 +1,69 @@
+﻿@page
+@model Universite.Pages.SaisieNotes.SaisieNotesModel
+@{
+    ViewData["Title"] = "Saisie";
+}
+
+<h2>Saisie des notes</h2>
+<br />
+<b>Etape 1</b>
+<p>Veuillez choisir l'UE pour la saisie des notes <br /> Cliquez sur charger les notes</p>
+<br />
+<form method="post">
+    <div class="form-group">
+        <select asp-for="UEID" class="form-control" asp-items="ViewBag.SelectUEsData"></select>
+    </div>
+    <div class="form-group">
+        <button asp-page-handler="load">Charger les notes</button>
+    </div>
+</form>
+
+<b>Etape 2</b>
+<p>
+    Pensez à enregistrer vos modifications avant de quitter la page ou de changer d'UE
+    Veuillez saisir/modifier des notes de l'UE : @{
+        try
+        {
+            @Model.ue.NomComplet
+            <br />
+        }
+        catch (Exception e) { }
+    }
+</p>
+<br />
+<form method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Nom étudiant
+                </th>
+                <th>
+                    Note /20
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (KeyValuePair<Universite.Models.Etudiant, string> kvp in Model.etude)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => kvp.Key.Nom)
+                        @Html.DisplayFor(modelItem => kvp.Key.Prenom)
+                    </td>
+                    <td>
+                        <input asp-for="@kvp.Key.ID" name="etudiantID" type="hidden" />
+                        <input asp-for="@Model.ue.ID" name="UEID" type="hidden" />
+                        <div class="form-group">
+                            <input asp-for="@kvp.Value" name="Notes" />
+                            <span asp-validation-for="@kvp.Value" class="text-danger"></span>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="form-group">
+        <button asp-page-handler="Update">Mettre à jour les notes</button>
+    </div>
+</form>
